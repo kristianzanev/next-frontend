@@ -1,15 +1,9 @@
 import type { NextPage } from 'next';
 import useSWR from 'swr';
+import Layout from '../components/layout';
 
 const fetcher = async () => {
-    // try {
-    //     const response = await fetch('http://localhost:3000/users')
-    //     return await response.json();
-    // } catch(error) {
-    //     return error
-    // }
-
-    const res = await fetch('http://localhost:3000/users')
+    const res = await fetch('https://nest-backend-api.herokuapp.com/users') // TODO: the error handling below is not enough, fix it
 
     // If the status code is not in the range 200-299,
     // we still try to parse and throw it.
@@ -26,6 +20,10 @@ const fetcher = async () => {
 }
 
 const Users: NextPage = () => {
+    /**
+     * NOTE: THIS IS EXPERIMENTAL USE OF SWR (THIS IS UPDATING THE DATA LIVE ON THE FRONT END) it will be very useful for the task page
+     * 
+    */
     const {data, error} = useSWR('users', fetcher);
     if (error) {
         return (<div> 
@@ -38,13 +36,19 @@ const Users: NextPage = () => {
         </div>)
     } 
     return (
-        <div>
-            <h1>Users</h1>
-             { data.map((user : any) => (
-                <ul key={user.username}><li>Username: - {user.username}</li><li>Email: - {user.email}</li><li>IsEmailConfirmed: - {user.isEmailConfirmed}</li></ul>
-            )) }
-            
-        </div>
+        <Layout>
+            <div>
+                <h1>Users</h1>
+                { data.map((user : any) => (
+                    <ul key={user.username}>
+                    <h3>{user.username}</h3>
+                    { Object.entries(user).map(([key, value]) => (<li key={key}> {key}: {value} </li>)) }
+                    </ul>
+                    // <ul key={user.username}><li>Username: - {user.username}</li><li>Email: - {user.email}</li><li>IsEmailConfirmed: - {user.isEmailConfirmed}</li></ul>
+                )) }
+                
+            </div>
+        </Layout>
     );
 }
 
