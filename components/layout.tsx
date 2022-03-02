@@ -2,6 +2,7 @@ import Link from 'next/link';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Nav, Navbar, NavbarProps } from 'rsuite';
+import MemberIcon from '@rsuite/icons/Member';
 import './layout.less';
 
 interface LayoutProps {
@@ -29,18 +30,21 @@ const Layout: React.FunctionComponent<LayoutProps> = ({ activeKey, children }) =
   return (
     <div className="container">
       <Navbar>
+        <Navbar.Brand>
+          ZADACHKI.BG
+        </Navbar.Brand>
         <Nav activeKey={activeKey}>
-          <Nav.Item eventKey="home" href="/">
+          <Nav.Item eventKey="home" href="/" as={NavLink}>
             Home
           </Nav.Item>
-          <Nav.Item eventKey="one" href="/one">
+          <Nav.Item eventKey="one" href="/one" as={NavLink}>
             Page 1
           </Nav.Item>
-          <Nav.Item eventKey="two" href="/two">
-            Page 2
-          </Nav.Item>
-          <Nav.Item eventKey="users" href="/users">
+          <Nav.Item eventKey="users" href="/users" as={NavLink}>
             Users
+          </Nav.Item>
+          <Nav.Item eventKey="register" href="/register" icon={<MemberIcon />} color="green" as={NavLink}>
+            Register
           </Nav.Item>
         </Nav>
       </Navbar>
