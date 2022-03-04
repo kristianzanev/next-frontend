@@ -1,7 +1,7 @@
+/* eslint-disable new-cap */
 import React from 'react';
-import PropTypes from 'prop-types';
-import { Button, ButtonToolbar, FlexboxGrid, Form, Nav, Navbar, NavbarProps, Schema } from 'rsuite';
-import { StringType, NumberType } from 'schema-typed';
+import { Button, ButtonToolbar, FlexboxGrid, Form, Schema } from 'rsuite';
+import { StringType } from 'schema-typed';
 
 const model = Schema.Model({
   name: StringType().isRequired('This field is required.'),
@@ -22,7 +22,7 @@ const model = Schema.Model({
     .isRequired('This field is required.')
 });
 
-const TextField = React.forwardRef((props, ref) => {
+const TextField = React.forwardRef((props: any, ref: any) => {
   const { name, label, accepter, ...rest } = props;
   return (
     <Form.Group controlId={`${name}-4`} ref={ref}>
@@ -35,9 +35,10 @@ const TextField = React.forwardRef((props, ref) => {
 TextField.displayName = 'TextField'
 
 const RegisterForm: React.FunctionComponent = () => {
-  const formRef = React.useRef();
-  const [formError, setFormError] = React.useState({});
-  const [formValue, setFormValue] = React.useState({
+  const formRef = React.useRef<any>();
+  // eslint-disable-next-line no-unused-vars
+  const [formError, setFormError] = React.useState<any>({});
+  const [formValue, setFormValue] = React.useState<any>({
     name: '',
     email: '',
     password: '',

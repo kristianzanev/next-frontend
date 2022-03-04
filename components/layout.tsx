@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Nav, Navbar, NavbarProps } from 'rsuite';
+import { Nav, Navbar } from 'rsuite';
 import MemberIcon from '@rsuite/icons/Member';
 import './layout.less';
 
