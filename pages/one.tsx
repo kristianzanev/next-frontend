@@ -1,8 +1,9 @@
+/* eslint-disable require-jsdoc */
 import React from 'react';
 import Header from 'next/head';
 import Layout from '../components/layout';
 
-export default function Home() {
+export default function PageOne() {
   return (
     <>
       <Header>

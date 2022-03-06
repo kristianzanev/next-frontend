@@ -1,9 +1,10 @@
 import type { NextPage } from 'next';
 import useSWR from 'swr';
 import Layout from '../components/layout';
+import React from 'react';
 
 const fetcher = async () => {
-    const res = await fetch('https://nest-backend-api.herokuapp.com/users') // TODO: the error handling below is not enough, fix it
+    const res = await fetch(`${process.env.BACKEND_URL}/users`) // TODO: the error handling below is not enough, fix it
 
     // If the status code is not in the range 200-299,
     // we still try to parse and throw it.

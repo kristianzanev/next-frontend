@@ -30,5 +30,8 @@ module.exports = {
 
 
     return config;
-  }
+  },
+  env: {
+    BACKEND_URL: 'http://localhost:3000', // https://nest-backend-api.herokuapp.com
+  },
 };

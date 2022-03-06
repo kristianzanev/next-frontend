@@ -2,8 +2,8 @@
 import React from 'react';
 import { Button, ButtonToolbar, FlexboxGrid, Form, Schema } from 'rsuite';
 import { StringType } from 'schema-typed';
-import Cookies from 'universal-cookie';
-
+// import Cookies from 'universal-cookie';
+import BasicModal from '../modal/basicModal';
 const model = Schema.Model({
   username: StringType().isRequired('This field is required.'),
   email: StringType()
@@ -45,6 +45,9 @@ const RegisterForm: React.FunctionComponent = () => {
     password: '',
     verifyPassword: ''
   });
+  const [open, setModalOpen] = React.useState(false);
+  // const handleModalOpen = () => setModalOpen(true);
+  const onModalClose = () => setModalOpen(false);
 
   const handleSubmit = async () => {
 
@@ -61,11 +64,17 @@ const RegisterForm: React.FunctionComponent = () => {
   };
 
   try {
-    const response = await fetch('https://nest-backend-api.herokuapp.com/auth/register', requestOptions);
-    const { token } = await response.json();
-    const cookies = new Cookies();
-    cookies.set('token', token, { path: '/', httpOnly: true, sameSite: 'strict' });
-    cookies.get('token');
+    const response = await fetch(`${process.env.BACKEND_URL}/auth/register`, requestOptions);
+
+    if(response.ok) {
+      setModalOpen(true)
+    }
+
+    // const { token } = await response.json();
+    // const cookies = new Cookies();
+    // TODO: change secure prop to true when we have https 
+    // cookies.set('token', token, { path: '/', httpOnly: true, sameSite: 'strict', secure: false });
+    // console.warn(cookies.get('token'), token)
   } catch (error) {
     throw new Error(`${error}`);
   }
@@ -78,6 +87,7 @@ const RegisterForm: React.FunctionComponent = () => {
     });
   };
   return (
+    <>
     <FlexboxGrid>
       <FlexboxGrid.Item colspan={12}>
         <Form
@@ -109,6 +119,15 @@ const RegisterForm: React.FunctionComponent = () => {
       <FlexboxGrid.Item colspan={12}>
       </FlexboxGrid.Item>
     </FlexboxGrid>
+    <BasicModal 
+      title = 'User registration successful' 
+      paragraph = 'Email verification send. Look for the verification email in your inbox (also spam / junk) and click the link in that email. A confirmation message will appear in your web browser.' 
+      buttonText='Ok' 
+      onClose = {onModalClose}
+      onAccept = {onModalClose}
+      open = {open}
+  ></BasicModal>
+  </>
   );
 };
 

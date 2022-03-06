@@ -43,7 +43,10 @@ const Layout: React.FunctionComponent<LayoutProps> = ({ activeKey, children }) =
           <Nav.Item eventKey="users" href="/users" as={NavLink}>
             Users
           </Nav.Item>
-          <Nav.Item eventKey="register" href="/register" icon={<MemberIcon />} color="green" as={NavLink}>
+          <Nav.Item eventKey="test" href="/test" as={NavLink}>
+            test
+          </Nav.Item>
+          <Nav.Item eventKey="register" href="/register" icon={<MemberIcon />} as={NavLink}>
             Register
           </Nav.Item>
         </Nav>
