@@ -2,9 +2,10 @@
 import React from 'react';
 import { Button, ButtonToolbar, FlexboxGrid, Form, Schema } from 'rsuite';
 import { StringType } from 'schema-typed';
+import Cookies from 'universal-cookie';
 
 const model = Schema.Model({
-  name: StringType().isRequired('This field is required.'),
+  username: StringType().isRequired('This field is required.'),
   email: StringType()
     .isEmail('Please enter a valid email address.')
     .isRequired('This field is required.'),
@@ -39,17 +40,35 @@ const RegisterForm: React.FunctionComponent = () => {
   // eslint-disable-next-line no-unused-vars
   const [formError, setFormError] = React.useState<any>({});
   const [formValue, setFormValue] = React.useState<any>({
-    name: '',
+    username: '',
     email: '',
     password: '',
     verifyPassword: ''
   });
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+
     if (!formRef.current.check()) {
-      console.error('Form Error');
-      return;
+      throw new Error('Form Error');
     }
+
+    const { username, password, email } = formValue;
+
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password, email })
+  };
+
+  try {
+    const response = await fetch('https://nest-backend-api.herokuapp.com/auth/register', requestOptions);
+    const { token } = await response.json();
+    const cookies = new Cookies();
+    cookies.set('token', token, { path: '/', httpOnly: true, sameSite: 'strict' });
+    cookies.get('token');
+  } catch (error) {
+    throw new Error(`${error}`);
+  }
     console.log(formValue, 'Form Value');
   };
 
@@ -68,7 +87,7 @@ const RegisterForm: React.FunctionComponent = () => {
           formValue={formValue}
           model={model}
         >
-          <TextField name="name" label="Username" />
+          <TextField name="username" label="Username" />
           <TextField name="email" label="Email" />
           <TextField name="password" label="Password" type="password" autoComplete="off" />
           <TextField
