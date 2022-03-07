@@ -1,14 +1,70 @@
+/* eslint-disable require-jsdoc */
 /* eslint-disable new-cap */
+
 import React from 'react';
 import { Button, ButtonToolbar, FlexboxGrid, Form, Schema } from 'rsuite';
 import { StringType } from 'schema-typed';
 // import Cookies from 'universal-cookie';
 import BasicModal from '../modal/basicModal';
+
+function delay(ms = 1000) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+        resolve(true);
+    }, ms);
+  });
+}
+class AsyncQueue {
+  resolve: any;
+  reject: any;
+  promise: Promise<unknown>;
+  pendingPromises: array;
+  constructor() {
+    this.resolve = Promise.resolve;
+    this.promise = new Promise((resolve, reject) => { this.resolve = resolve; this.reject = reject;});
+    this.pendingPromises = []
+  }
+
+  addPromise() : any {
+    let resolveRef;
+    const promise = new Promise((resolve => resolveRef = resolve));
+
+    if(!this.pendingPromises.length) {
+      this.pendingPromises.push([promise, resolveRef]);
+    }
+
+    return this.allPromisesValid();
+  }
+
+  allPromisesValid () : Promise<Boolean> {
+    return new Promise(resolve => {
+      const promises = this.pendingPromises.map(([promise]) => promise);
+      Promise.all(promises).then(booleans => {
+        const allPromisesValid = booleans.every(bool => bool);
+        resolve(allPromisesValid);
+      });
+    });
+  }
+
+  validatePromises(value: any) {
+    this.pendingPromises.forEach(([_, resolve]) => resolve(value));
+  }
+
+  resetPending() {
+    this.pendingPromises = [];
+  }
+}
+
+const emailChecks = new AsyncQueue()
+const userChecks = new AsyncQueue()
+
 const model = Schema.Model({
-  username: StringType().isRequired('This field is required.'),
+  username: StringType().isRequired('This field is required.')
+    .addRule(() => userChecks.addPromise(), 'Username is already taken'),
   email: StringType()
-    .isEmail('Please enter a valid email address.')
-    .isRequired('This field is required.'),
+    .addRule(() => emailChecks.addPromise(), 'Email is already taken')
+    .isRequired('This field is required.')
+    .isEmail('Please enter a valid email address.'),
   password: StringType().isRequired('This field is required.'),
   verifyPassword: StringType()
     .addRule((value, data) => {
@@ -50,8 +106,22 @@ const RegisterForm: React.FunctionComponent = () => {
   const onModalClose = () => setModalOpen(false);
 
   const handleSubmit = async () => {
+    console.warn('after delay', formValue.email)
+    const isEmailValid = formValue.email !== 'foo@domain.com'; // TODO change this with db validation!!
+    const isUserValid = formValue.username !== 'pesho'; // TODO change this with db validation!!
 
-    if (!formRef.current.check()) {
+    await delay(1000) // simulating db delay
+
+    emailChecks.validatePromises(isEmailValid);
+    userChecks.validatePromises(isUserValid);
+
+    const formCheck = await formRef.current.checkAsync();
+
+    emailChecks.resetPending();
+    userChecks.resetPending();
+
+
+    if (formCheck.hasError) {
       throw new Error('Form Error');
     }
 
